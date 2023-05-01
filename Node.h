@@ -4,8 +4,12 @@
 namespace bst 
 {
 	template <typename T>
-	class Node
-	{
+	class Node {
+		public:
+			T data;
+			Node* parent;
+			Node* left;
+			Node* right;
 
 	};
 }
