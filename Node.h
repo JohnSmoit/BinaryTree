@@ -23,21 +23,22 @@ namespace bst
 
 	template <typename T, typename _Comp = GenericComparison<T>>
 	class Node {
-		public:
+	public:
 
-			Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_data(nullptr) {}
-			Node(T&& data); //moves (must be on heap)
-			Node(T& data); //copies
+		Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_data(nullptr) {}
+		Node(T&& data); //moves (must be on heap)
+		Node(T& data); //copies
 
-			T& data();
-			Node*& parent();
-			Node*& left();
-			Node*& right();
-		private:
-			T* m_data;
-			Node<T, _Comp>* m_parent;
-			Node<T, _Comp>* m_left;
-			Node<T, _Comp>* m_right;
+		T& data();
+		Node*& parent();
+		Node*& left();
+		Node*& right();
+	private:
+		T* m_data;
+		Node<T, _Comp>* m_parent;
+		Node<T, _Comp>* m_left;
+		Node<T, _Comp>* m_right;
+	};
 }
 
 

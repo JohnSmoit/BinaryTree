@@ -10,7 +10,7 @@ struct StringComp
 	}
 };
 
-int main() 
+int main()
 {
 	std::cout << "Hello World!" << std::endl;
 
@@ -22,3 +22,4 @@ int main()
 
 	std::cout << node.data() << std::endl;
 
+}
