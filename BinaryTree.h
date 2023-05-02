@@ -13,7 +13,6 @@ namespace bst
 			void clear() const;
 			bool find() const;
 			bool isBalanced();
-
 			Node<T, Compare>* NewNode(T& data, Node<T, Compare>* parent = nullptr, Node<T, Compare>* left = nullptr, Node<T, Compare>* right = nullptr); //uses less template mess this way.
 		protected:
 			Node<T, Compare>* insertNode(T data, Node<T, Compare>* node);
@@ -22,5 +21,17 @@ namespace bst
 		private:
 			Node<T, Compare>* root;
 	};
-}
 
+   /*template <typename T>
+    void BinaryTree<T>::insertNode(T data) {
+		if(root == nullptr) {
+			root = new Node(data);
+		} else {
+			insertHelper(data, root);
+		}
+    }
+
+	insertHelper(T data, Node* node) {
+
+	}*/
+}

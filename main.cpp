@@ -22,5 +22,3 @@ int main()
 
 	std::cout << node.data() << std::endl;
 
-	return 0;
-}

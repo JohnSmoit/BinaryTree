@@ -38,8 +38,6 @@ namespace bst
 			Node<T, _Comp>* m_parent;
 			Node<T, _Comp>* m_left;
 			Node<T, _Comp>* m_right;
-
-	};
 }
 
 
