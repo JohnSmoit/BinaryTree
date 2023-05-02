@@ -8,7 +8,6 @@ namespace bst
 		public:
 			T data;
 			Node* parent;
-			Node* leaf;
 			Node* left;
 			Node* right;
 
