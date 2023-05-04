@@ -2,6 +2,10 @@
 #include <string>
 #include "BinaryTree.h"
 
+
+
+#ifdef USE_MAIN_1
+
 struct StringComp 
 {
 	bool compare(std::string A, std::string B) const 
@@ -23,3 +27,5 @@ int main()
 	std::cout << node.data() << std::endl;
 
 }
+
+#endif
