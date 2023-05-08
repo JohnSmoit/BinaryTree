@@ -44,7 +44,11 @@ int main()
 
 	auto tree = BinaryTree<string>::FromList(values);
 
+	std::cout << tree.ToString(POST_ORDER) << endl;
+
 	auto literalTree = BinaryTree<string>::CreateFromValues("hello", "goodbye", "cheese", "thing1", "thing2", "chase");
+
+	tree.clear();
 
 	return 0;
 }
