@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include<algorithm>
+#include <algorithm>
 #include "Node.h"
 
 
@@ -56,6 +56,9 @@ namespace bst
 
 		vector<BaseNode<T>*> TraversePreOrder();
 
+		template <typename NewComp>
+		void SwapConditionFor(const T& data);
+
 
 		string ToString(TraversalOrder order = IN_ORDER);
 
@@ -64,9 +67,8 @@ namespace bst
 	protected:
 
 		template <typename NodeComp = Compare>
-		BaseNode<T>* insertNode(const T& data, BaseNode<T>* node);
+		BaseNode<T>* insertNode(BaseNode<T>* newNode, BaseNode<T>* node);
 		BaseNode<T>* deleteNode(const T& data, BaseNode<T>* node);
-		bool isBalanced(BaseNode<T>* node);
 	private:
 		BaseNode<T>* root;
 		BaseNode<T>* findHelper(BaseNode<T>* current, const T& data) const;
@@ -85,26 +87,29 @@ namespace bst
 	template <typename NodeComp>
 	void BinaryTree<T, Compare>::insertNode(const T& data)
 	{
+		auto newNode = NewNode<NodeComp>(data);
 		if (root == nullptr) {
-			root = NewNode<NodeComp>(data);
+			root = newNode;
 		}
 		else {
-			insertNode(data, root);
+			insertNode(newNode, root);
 		}
 	}
 
 	template <typename T, typename Compare>
 	template <typename NodeComp> //NodeComp is the actual comparison you want to use for the node.
-	inline BaseNode<T>* BinaryTree<T, Compare>::insertNode(const T& data, bst::BaseNode<T>* node)
+	BaseNode<T>* BinaryTree<T, Compare>::insertNode(BaseNode<T>* newNode, bst::BaseNode<T>* node)
 	{
-		CompareResult result = node->evaluate(data);
+		CompareResult result = node->evaluate(newNode->data());
 		if (result == CompareResult::LESS_THAN) {
 			if (node->left() == nullptr) {
-				node->left() = NewNode<NodeComp>(data);
+				node->left() = newNode;
+				newNode->parent() = node;
 				return node->left();
 			}
 			else {
-				return insertNode(data, node->left());
+				return insertNode(newNode, node->left());
+				return insertNode(newNode, node->left());
 			}
 		}
 		else if (result == EQUAL) 
@@ -113,15 +118,19 @@ namespace bst
 		}
 		else {
 			if (node->right() == nullptr) {
-				node->right() = NewNode(data);
+				node->right() = newNode;
+				newNode->parent() = node;
 				return node->right();
 			}
 			else {
-				return insertNode(data, node->right());
+				return insertNode(newNode, node->right());
 			}
 		}
 	}
-
+	
+	/// @brief Deletes a node
+	/// @pre must not be empty !isEmpty()
+	/// @param data - The data to delete from the tree
 	template <typename T, typename Compare>
 	void BinaryTree<T, Compare>::deleteNode(const T& data) {
 		if (isEmpty()) {
@@ -131,6 +140,11 @@ namespace bst
 			root = deleteNode(data, root);
 		}
 	}
+
+	/// @brief the Private helper function of deleteNode();
+	/// @param data the data to remove
+	/// @param node the current node the pointer is pointing to
+	/// @return node
 	template <typename T, typename Compare>
 	inline BaseNode<T>* BinaryTree<T, Compare>::deleteNode(const T& data, bst::BaseNode<T>* node) {
 		CompareResult result = node->evaluate(data);
@@ -161,6 +175,9 @@ namespace bst
 		}
 	}
 
+	/// @brief finds the minimum node in the tree
+	/// @pre must not be empty !isEmpty();
+	/// @return the FindMinHelper();
 	template<typename T, typename Compare>
 	T bst::BinaryTree<T, Compare>::findMin() {
 		if (isEmpty()) {
@@ -170,7 +187,10 @@ namespace bst
 			return findMinHelper(root);
 		}
 	}
-
+	
+	/// @brief the private helper function for FindMin();
+	/// @param node the current node the pointer is pointing to
+	/// @return the left most node, which is the smallest node
 	template <typename T, typename Compare>
 	T bst::BinaryTree<T, Compare>::findMinHelper(bst::BaseNode<T>* node) {
 		if (node->left() != nullptr) {
@@ -181,9 +201,13 @@ namespace bst
 		}
 	}
 
-
-	// Helper function that search the data in the tree
-	// return Node
+	
+	/// @brief Helper that search the tree to find the matching data
+	/// @pre 
+	/// @param BaseNode<T>* current - the current node that the pointer point to 
+	/// @param const T& data - data that need to be found
+	/// @return node address
+	
 	template <typename T, typename Compare>
 	BaseNode<T>* bst::BinaryTree<T, Compare>::findHelper(BaseNode<T>* current, const T& data) const {
 		if (current != nullptr) {
@@ -198,7 +222,10 @@ namespace bst
 		}
 		return nullptr;
 	}
-
+	
+	/// @brief given a vector of values, insert each data into the tree
+	/// @param values the vector which contains the list of data to insert to create a working tree
+	/// @return the tree that has been created
 	template <typename T, typename Compare>
 	bst::BinaryTree<T, Compare> bst::BinaryTree<T, Compare>::FromList(std::vector<T>& values)
 	{
@@ -216,6 +243,8 @@ namespace bst
 		return newTree;
 	}
 
+	/// @brief traverses the tree containing the data in order
+	/// @return the vector of nodes
 	template<typename T, typename Compare>
 	inline vector<BaseNode<T>*> BinaryTree<T, Compare>::TraverseInOrder()
 	{
@@ -224,7 +253,9 @@ namespace bst
 
 		return values;
 	}
-
+	
+	/// @brief traverses the tree containing the data in  post order
+	/// @return the vector of nodes
 	template<typename T, typename Compare>
 	inline vector<BaseNode<T>*> BinaryTree<T, Compare>::TraversePostOrder()
 	{
@@ -234,6 +265,8 @@ namespace bst
 		return values;
 	}
 
+	/// @brief traverses the tree containing the data in pre order
+	/// @return the vector of nodes
 	template<typename T, typename Compare>
 	inline vector<BaseNode<T>*> BinaryTree<T, Compare>::TraversePreOrder() 
 	{
@@ -271,8 +304,10 @@ namespace bst
 
 
 
-	// search data in the tree
-	// return Node
+	/// @brief search the tree to find the matching data
+	/// @pre  
+	/// @param const T& data - data that need to be found
+	/// @return node address
 	template <typename T, typename Compare>
 	bst::BaseNode<T>* bst::BinaryTree<T, Compare>::find(const T& data) const {
 		if (root == NULL) {
@@ -294,13 +329,37 @@ namespace bst
 	inline Node<T, NodeComp>* BinaryTree<T, Compare>::NewNode(const T& data, BaseNode<T>* parent, BaseNode<T>* left, BaseNode<T>* right)
 	{
 		auto newNode = new Node<T, NodeComp>(data);
-		if (parent) newNode->parent() = parent;
-		if (left) newNode->left() = left;
-		if (right) newNode->right() = right;
+		if (parent) { 
+			newNode->parent() = parent; 
+			
+			CompareResult comp = parent->evaluate(data);
+			if (comp == LESS_THAN) 
+			{
+				parent->left() = newNode;
+			}
+			else 
+			{
+				parent->right() = newNode;
+			}
+		}
+		if (left) 
+		{
+			newNode->left() = left; 
+			left->parent() = newNode;
+		}
+		if (right) 
+		{ 
+			newNode->right() = right;
+			right->parent() = newNode;
+		}
 
 		return newNode;
 	} //this is the copy version
 
+	/// @brief create tree form multiple values
+	/// @pre 
+	/// @param _Ty && ...vals - multiple values
+	/// @return BinaryTree<T, Compare> newTree
 	template<typename T, typename Compare>
 	template<typename ..._Ty>
 	inline BinaryTree<T, Compare> BinaryTree<T, Compare>::CreateFromValues(_Ty && ...vals)
@@ -321,12 +380,39 @@ namespace bst
 		return newTree;
 	}
 
+	template<typename T, typename Compare>
+	template<typename NewComp>
+	void BinaryTree<T, Compare>::SwapConditionFor(const T& data)
+	{
+		auto found = find(data);
+		if (!found) 
+		{
+			return;
+		}
+
+		auto parent = found->parent();
+		auto left = found->left();
+		auto right = found->right();
+
+		left->makeSubTree();
+		right->makeSubTree();
+
+
+		auto replacementNode = NewNode<NewComp>(found->data(), parent);
+		insertNode(replacementNode, left); //re insert the left and right node in the right places
+		insertNode(replacementNode, right);
+		delete found;
+	}
+
+	/// @brief empty the tree
 	template <typename T, typename Compare>
 	void BinaryTree<T, Compare>::clear()
 	{
 		clear_Worker(root);
 	}
 
+	/// @brief process to empty the tree
+	/// @param BaseNode<T>* node - the root of the tree
 	template <typename T, typename Compare>
 	void BinaryTree<T, Compare>::clear_Worker(BaseNode<T>* node)
 	{
@@ -356,6 +442,9 @@ namespace bst
 		}
 	}
 
+	/// @brief print the traverse postorder of the tree
+	/// @param vector<BaseNode<T>*>& values - the 
+	/// @param BaseNode<T>* node
 	template<typename T, typename Compare>
 	void BinaryTree<T, Compare>::postOrder_Worker(vector<BaseNode<T>*>& values, BaseNode<T>* node) const
 	{
@@ -407,26 +496,33 @@ namespace bst
 		inOrder_Worker(values, node->right());
 	}
 
+	/// @brief finds the height of the tree
+	/// @pre if the root is nullptr, then the height of the tree is just 0
+	/// @return the getHeight helper function
 	template<typename T, typename Compare>
 	int BinaryTree<T, Compare>::getHeight() const {
 		if(root == nullptr) {
-			cerr << "There is no height on an empty tree!" << endl;
-			return -1;
+			return 0;
 		} else {
-			return GetHeight(root);
+			return getHeight(root);
 		}
 	}
 
-
+	/// @brief the private helper function of getHeight();
+	/// @param node the current node the pointer is pointing at
+	/// @return the Height of the tree which should be an int
 	template<typename T, typename Compare>
 	int BinaryTree<T, Compare>::getHeight(BaseNode<T>* node) const {
 		if(node == nullptr) {
 			return -1;
 		} else {
-			return max(GetHeight(node->left()), GetHeight(node->right())) + 1;
+			return max(getHeight(node->left()), getHeight(node->right())) + 1;
 		}
 	}
 
+	/// @brief determines whether the tree is balanced or not - meaning the left side of the tree is equal to the right side of the tree
+	/// @pre if the root is nullptr, then the tree has no node, which means the tree is already balanced
+	/// @return the helper function for isBalanced();
 	template <typename T, typename Compare> 
 	bool BinaryTree<T, Compare>::isBalanced() {
         if(root == nullptr) {
@@ -436,6 +532,10 @@ namespace bst
 		}
     }
 
+	/// @brief the private helper function for isBalanced();
+	/// @param node the current node that the pointer is pointing to
+	/// @return true if the tree is balanced
+	/// @return false if the tree is skewed
 	template <typename T, typename Compare> 
 	bool BinaryTree<T, Compare>::isBalanced(BaseNode<T>* node) {
         if(node != nullptr) {

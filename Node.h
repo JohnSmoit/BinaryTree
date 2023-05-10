@@ -36,6 +36,8 @@ namespace bst
 		BaseNode*& left();
 		BaseNode*& right();
 
+		void makeSubTree();
+
 	protected:
 		BaseNode* m_parent;
 		BaseNode* m_left;
@@ -61,6 +63,13 @@ namespace bst
 }
 
 
+template <typename T>
+inline void bst::BaseNode<T>::makeSubTree() 
+{
+	m_parent = nullptr;
+	m_left = nullptr;
+	m_right = nullptr;
+}
 template <typename T>
 inline bool bst::BaseNode<T>::leaf() const 
 {
