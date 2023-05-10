@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include<algorithm>
 #include "Node.h"
 
 
@@ -58,6 +59,8 @@ namespace bst
 
 		string ToString(TraversalOrder order = IN_ORDER);
 
+		int getHeight() const;
+
 	protected:
 
 		template <typename NodeComp = Compare>
@@ -74,6 +77,8 @@ namespace bst
 		void postOrder_Worker(vector<BaseNode<T>*>& values, BaseNode<T>* node) const;
 		void preOrder_Worker(vector<BaseNode<T>*>& values, BaseNode<T>* node) const;
 		void inOrder_Worker(vector<BaseNode<T>*>& values, BaseNode<T>* node) const;
+		int getHeight(BaseNode<T>* node) const;
+		bool isBalanced(BaseNode<T>* node);
 	};
 
 	template <typename T, typename Compare>
@@ -280,14 +285,7 @@ namespace bst
 		return findHelper(root->right(), data);
 	}
 
-
-
-
-
-
-
-
-	template<typename T, typename Compare>
+    template<typename T, typename Compare>
 	template<typename NodeComp>
 	inline Node<T, NodeComp>* BinaryTree<T, Compare>::NewNode(const T& data, BaseNode<T>* parent, BaseNode<T>* left, BaseNode<T>* right)
 	{
@@ -404,5 +402,45 @@ namespace bst
 		values.push_back(node);
 		inOrder_Worker(values, node->right());
 	}
+
+	template<typename T, typename Compare>
+	int BinaryTree<T, Compare>::getHeight() const {
+		if(root == nullptr) {
+			cerr << "There is no height on an empty tree!" << endl;
+			return -1;
+		} else {
+			return GetHeight(root);
+		}
+	}
+
+
+	template<typename T, typename Compare>
+	int BinaryTree<T, Compare>::getHeight(BaseNode<T>* node) const {
+		if(node == nullptr) {
+			return -1;
+		} else {
+			return max(GetHeight(node->left()), GetHeight(node->right())) + 1;
+		}
+	}
+
+	template <typename T, typename Compare> 
+	bool BinaryTree<T, Compare>::isBalanced() {
+        if(root == nullptr) {
+			return true;
+		} else {
+			return isBalanced(root);
+		}
+    }
+
+	template <typename T, typename Compare> 
+	bool BinaryTree<T, Compare>::isBalanced(BaseNode<T>* node) {
+        if(node != nullptr) {
+			if(abs(getHeight(node->left()) - getHeight(node->right())) > 1) {
+				return false;
+			}
+			return isBalanced(node->left()) && isBalanced(node->right());
+		}
+		return true;
+    }
 
 }
