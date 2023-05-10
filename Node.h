@@ -51,9 +51,6 @@ namespace bst
 		Node(const T& data); //copies
 
 		CompareResult evaluate(const T& other) const override;
-
-
-
 	};
 
 	template<typename T>

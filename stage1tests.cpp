@@ -4,7 +4,7 @@
 #include <fstream>
 #include "BinaryTree.h"
 
-#define USE_MAIN_2
+//#define USE_MAIN_2
 
 #ifdef USE_MAIN_2
 

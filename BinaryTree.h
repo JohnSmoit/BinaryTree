@@ -102,6 +102,10 @@ namespace bst
 				return insertNode(data, node->left());
 			}
 		}
+		else if (result == EQUAL) 
+		{
+			return node;
+		}
 		else {
 			if (node->right() == nullptr) {
 				node->right() = NewNode(data);
